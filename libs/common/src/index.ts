@@ -9,6 +9,12 @@ export * from './rmq/rmq.service';
 export * from './rmq/rmq.service.interface';
 
 //dtos
+export * from './dto/registration.dto'
+export * from './dto/login.dto'
+export * from './dto/create-user.dto'
+export * from './dto/create-profile.dto'
+export * from './dto/update-user.dto'
+export * from './dto/update-profile.dto'
 
 
 //entities
