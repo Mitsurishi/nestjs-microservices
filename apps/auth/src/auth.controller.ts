@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { RegistrationDto } from '@app/common';
 

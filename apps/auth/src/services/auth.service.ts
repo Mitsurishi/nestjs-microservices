@@ -1,18 +1,16 @@
 import { RegistrationDto, User } from '@app/common';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userService: UserService
   ) { }
 
   async registration(registrationDto: RegistrationDto) {
-    const
-    return this.userRepository.create()
+
+    return this.userService.createUser(registrationDto)
   }
 
 
