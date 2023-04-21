@@ -5,17 +5,18 @@ import { ClientProxy } from '@nestjs/microservices';
 @Controller()
 export class AppController {
   constructor(
-    @Inject('AUTH_SERVICE') private authService: ClientProxy
+    @Inject('AUTH_SERVICE') private authService: ClientProxy,
+    @Inject('PROFILE_SERVICE') private profileService: ClientProxy
   ) { }
 
   @Post('auth/registration')
   async registration(@Body() registrationDto: RegistrationDto) {
-    return this.authService.send({ cmd: 'registration', }, registrationDto);
+    return this.authService.send({ cmd: 'registration' }, registrationDto);
   }
 
   @Post('auth/login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.send({ cmd: 'login', }, loginDto);
+    return this.authService.send({ cmd: 'login' }, loginDto);
   }
 
 }

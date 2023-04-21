@@ -4,7 +4,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    hostname: rabbitmq
     volumes:
       - /var/lib/rabbitmq
     ports:
@@ -12,20 +11,43 @@ services:
       - '15672:15672'
     env_file:
       - .env
+    networks:
+      - rabbitmq
 
-  auth:
-    build:
-      context: ./
-      dockerfile: ./apps/auth/Dockerfile
+  postgres_auth:
+    image: postgres
+    env_file:
+      - authdb.env
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db/auth-db:/var/lib/postgresql/data
+    networks:
+      - postgres_auth
+
+  postgres_profile:
+    image: postgres
+    env_file:
+      - profiledb.env
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./db/profile-db:/var/lib/postgresql/data
+    networks:
+      - postgres_profile
+
+  postgres_admin:
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres_auth
+      - postgres_profile
     env_file:
       - .env
-    depends_on:
-      - rabbitmq
-      - postgres
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run start:dev auth
+    ports:
+      - '15432:80'
+    networks:
+      - postgres_auth
+      - postgres_profile
 
   api:
     build:
@@ -38,25 +60,53 @@ services:
     depends_on:
       - rabbitmq
       - auth
+      - profile
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     command: npm run start:dev api
+    networks:
+      - rabbitmq
 
-  postgres:
-    image: postgres
+  auth:
+    build:
+      context: ./
+      dockerfile: ./apps/auth/Dockerfile
     env_file:
-      - .env
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./db/data:/var/lib/postgresql/data
-
-  postgres_admin:
-    image: dpage/pgadmin4
+      - authdb.env
     depends_on:
-      - postgres
+      - rabbitmq
+      - postgres_auth
+      - profile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth
+    networks:
+      - postgres_auth
+      - rabbitmq
+
+  profile:
+    build:
+      context: ./
+      dockerfile: ./apps/profile/Dockerfile
     env_file:
-      - .env
-    ports:
-      - '15432:80'
+      - profiledb.env
+    depends_on:
+      - rabbitmq
+      - postgres_profile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev profile
+    networks:
+      - postgres_profile
+      - rabbitmq
+
+networks:
+  postgres_auth:
+    driver: bridge
+  postgres_profile:
+    driver: bridge
+  rabbitmq:
+    driver: bridge

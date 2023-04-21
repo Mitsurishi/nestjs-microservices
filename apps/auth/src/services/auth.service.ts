@@ -11,6 +11,7 @@ export class AuthService {
   async registration(registrationDto: RegistrationDto) {
 
     return this.userService.createUser(registrationDto)
+
   }
 
 

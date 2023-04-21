@@ -1,18 +1,21 @@
-import { RegistrationDto, User, UserRoles } from '@app/common';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { LoginDto, RegistrationDto, User, UserRoles } from '@app/common';
+import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleService } from './role.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UserService {
+
     constructor(
+        @Inject('PROFILE_SERVICE') private profileService: ClientProxy,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        @InjectRepository(UserRoles)
-        private readonly userRolesRepository: Repository<UserRoles>,
-        private readonly roleService: RoleService,
+        //  @InjectRepository(UserRoles)
+        //  private readonly userRolesRepository: Repository<UserRoles>,
+        //  private readonly roleService: RoleService,
     ) { }
 
     async createUser(dto: RegistrationDto) {
@@ -27,8 +30,15 @@ export class UserService {
             password: hashPassword
         });
 
+        const profilePayload = {
+            name: dto.name,
+            surname: dto.surname,
+            phone: dto.phone,
+            user_id: user.id
+        }
 
-        return user;
+        const profile = this.profileService.send({ cmd: 'create-profile' }, profilePayload)
+        return [user, profile]
     }
 
     async getUserByEmail(email: string) {
@@ -36,5 +46,14 @@ export class UserService {
         return user;
     }
 
+
+    private async validateUser(dto: LoginDto) {
+        const user = await this.getUserByEmail(dto.email);
+        const passwordEquals = await bcrypt.compare(dto.password, user.password);
+        if (user && passwordEquals) {
+            return user;
+        }
+        throw new UnauthorizedException({ message: 'Неправильный email или пароль' })
+    }
 
 }
