@@ -1,4 +1,4 @@
-import { LoginDto, RegistrationDto, User, UserRoles } from '@app/common';
+import { CreateProfileDto, CreateUserDto, LoginDto, RegistrationDto, User, UserRoles } from '@app/common';
 import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,32 +18,49 @@ export class UserService {
         //  private readonly roleService: RoleService,
     ) { }
 
-    async createUser(dto: RegistrationDto) {
-        const candidate = await this.getUserByEmail(dto.email);
-        if (candidate) {
-            throw new HttpException('Пользователь с таким email уже существует', HttpStatus.BAD_REQUEST)
-        }
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(dto.password, salt)
-        const user = this.userRepository.create({
-            email: dto.email,
-            password: hashPassword
-        });
+    async createUser(createUserDto: CreateUserDto, createProfileDto: CreateProfileDto) {
+        try {
+            const candidate = await this.getUserByEmail(createUserDto.email);
+            if (candidate) {
+                throw new HttpException('Пользователь с таким email уже существует', HttpStatus.BAD_REQUEST)
+            }
+            const salt = await bcrypt.genSalt(10)
+            const hashPassword = await bcrypt.hash(createUserDto.password, salt)
+            const user = this.userRepository.create({
+                email: createUserDto.email,
+                password: hashPassword
+            });
 
-        const profilePayload = {
-            name: dto.name,
-            surname: dto.surname,
-            phone: dto.phone,
-            user_id: user.id
+            await this.userRepository.save(user);
+
+            const userId = await this.getUserIdByEmail(createUserDto.email)
+
+            const profileData = {
+                name: createProfileDto.name,
+                surname: createProfileDto.surname,
+                phone: createProfileDto.phone,
+                user_id: userId
+            }
+
+            const profile = await this.profileService.send({ cmd: 'create-profile' }, profileData)
+            await profile.subscribe();
+            return [user, profile]
+        }
+        catch (error) {
+            console.log(error);
         }
 
-        const profile = this.profileService.send({ cmd: 'create-profile' }, profilePayload)
-        return [user, profile]
     }
 
     async getUserByEmail(email: string) {
-        const user = await this.userRepository.findOne({ where: { email } });
+        const user = await this.userRepository.findOne({ where: { email: email } });
         return user;
+    }
+
+    private async getUserIdByEmail(email: string) {
+        const user = await this.userRepository.findOne({ where: { email: email } });
+        const userId = user.id
+        return userId;
     }
 
 

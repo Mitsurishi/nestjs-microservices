@@ -1,4 +1,4 @@
-import { RegistrationDto } from '@app/common';
+import { CreateProfileDto, RegistrationDto, RmqService } from '@app/common';
 import { Controller, Get, Inject } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ProfileService } from './profile.service';
@@ -6,16 +6,18 @@ import { ProfileService } from './profile.service';
 @Controller()
 export class ProfileController {
 
-  constructor(private readonly profileService: ProfileService) { }
+  constructor(
+    private readonly profileService: ProfileService,
+    private readonly rmqService: RmqService
+  ) { }
 
   @MessagePattern({ cmd: 'create-profile' })
-  async createProfile(@Ctx() context: RmqContext, @Payload() payload: RegistrationDto) {
+  async createProfile(@Ctx() context: RmqContext, @Payload() createProfileDto: CreateProfileDto) {
 
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    this.rmqService.acknowledgeMessage(context);
 
-    return this.profileService.createProfile(payload);
+    const profile = await this.profileService.createProfile(createProfileDto);
+    return profile;
   }
 
 }

@@ -10,14 +10,6 @@ export class UserRoles {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Type(() => Number)
-    @Column({ type: Number })
-    role_id: number;
-
-    @Type(() => Number)
-    @Column({ type: Number })
-    user_id: number;
-
     @ManyToOne(() => User, (user) => user.userRoles, {
         onDelete: 'CASCADE',
     })

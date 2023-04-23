@@ -1,4 +1,4 @@
-import { Profile, RegistrationDto } from '@app/common';
+import { CreateProfileDto, Profile, RegistrationDto } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,18 +7,16 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ProfileService {
 
-  @InjectRepository(Profile)
-  private readonly profileRepository: Repository<Profile>
+  constructor(
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>
+  ) { }
 
-  async createProfile(payload: RegistrationDto) {
-    const profile = this.profileRepository.create({
-      name: payload.name,
-      surname: payload.surname,
-      phone: payload.phone,
-      user_id: payload.user_id
-    })
+  async createProfile(createProfileDto: CreateProfileDto) {
 
-    console.log(profile)
+    const profileData = this.profileRepository.create(createProfileDto);
+
+    const profile = await this.profileRepository.save(profileData);
     return profile;
   }
 

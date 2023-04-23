@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateProfileDto {
 
@@ -10,5 +10,8 @@ export class CreateProfileDto {
 
     @IsString()
     readonly phone: string;
+
+    @IsNumber()
+    readonly user_id: number;
 
 }

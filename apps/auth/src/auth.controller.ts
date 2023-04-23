@@ -1,21 +1,22 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-import { RegistrationDto } from '@app/common';
+import { RegistrationDto, RmqService } from '@app/common';
 
 @Controller()
 export class AuthController {
 
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    private readonly authService: AuthService,
+    private readonly rmqService: RmqService,
+  ) { }
 
   @MessagePattern({ cmd: 'registration' })
   async registration(@Ctx() context: RmqContext, @Payload() registrationDto: RegistrationDto) {
 
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
+    this.rmqService.acknowledgeMessage(context)
 
-    return this.authService.registration(registrationDto);
+    return this.authService.registration(registrationDto)
   }
 
 }

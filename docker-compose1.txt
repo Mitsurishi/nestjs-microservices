@@ -3,17 +3,17 @@ version: '3'
 services:
 
   postgres_auth:
-    container_name: postgres_auth
     image: postgres
     env_file:
       - .auth.env
     ports:
-      - '5434:5432'
+      - '5432:5432'
     volumes:
       - ./db/auth-db:/var/lib/postgresql/data
+    networks:
+      - postgres_auth
 
   postgres_profile:
-    container_name: postgres_profile
     image: postgres
     env_file:
       - .profile.env
@@ -21,9 +21,10 @@ services:
       - '5433:5432'
     volumes:
       - ./db/profile-db:/var/lib/postgresql/data
+    networks:
+      - postgres_profile
 
   postgres_admin:
-    container_name: pgadmin
     image: dpage/pgadmin4
     depends_on:
       - postgres_auth
@@ -34,10 +35,13 @@ services:
       - '15432:80'
     volumes:
       - ./db/pgadmin:/var/lib/data
+    networks:
+      - postgres_auth
+      - postgres_profile
 
   rabbitmq:
-    container_name: rabbitmq
     image: rabbitmq:3-management
+    container_name: rabbitmq
     volumes:
       - /var/lib/rabbitmq
     ports:
@@ -45,9 +49,10 @@ services:
       - '15672:15672'
     env_file:
       - .env
+    networks:
+      - rabbitmq
 
   auth:
-    container_name: auth
     build:
       context: ./
       dockerfile: ./apps/auth/Dockerfile
@@ -57,17 +62,15 @@ services:
       - rabbitmq
       - postgres_auth
       - profile
-    links:
-      - postgres_auth
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    ports:
-      - '3100:3100'
     command: npm run start:dev auth
+    networks:
+      - postgres_auth
+      - rabbitmq
 
   profile:
-    container_name: profile
     build:
       context: ./
       dockerfile: ./apps/profile/Dockerfile
@@ -79,14 +82,12 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    links:
-      - postgres_profile
-    ports:
-      - '3200:3200'
     command: npm run start:dev profile
+    networks:
+      - postgres_profile
+      - rabbitmq
 
   api:
-    container_name: api
     build:
       context: ./
       dockerfile: ./apps/api/Dockerfile
@@ -102,3 +103,13 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     command: npm run start:dev api
+    networks:
+      - rabbitmq
+
+networks:
+  postgres_auth:
+    driver: bridge
+  postgres_profile:
+    driver: bridge
+  rabbitmq:
+    driver: bridge
