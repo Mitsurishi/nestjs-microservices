@@ -1,10 +1,11 @@
-import { CreateProfileDto, CreateUserDto, LoginDto, RegistrationDto, User, UserRoles } from '@app/common';
+import { CreateProfileDto, CreateUserDto, User, } from '@app/common';
 import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleService } from './role.service';
 import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -24,8 +25,9 @@ export class UserService {
             if (candidate) {
                 throw new HttpException('Пользователь с таким email уже существует', HttpStatus.BAD_REQUEST)
             }
-            const salt = await bcrypt.genSalt(10)
-            const hashPassword = await bcrypt.hash(createUserDto.password, salt)
+
+            const hashPassword = await this.encryptPassword(createUserDto.password);
+
             const user = this.userRepository.create({
                 email: createUserDto.email,
                 password: hashPassword
@@ -42,19 +44,18 @@ export class UserService {
                 user_id: userId
             }
 
-            const profile = await this.profileService.send({ cmd: 'create-profile' }, profileData)
-            await profile.subscribe();
+            const profile = await firstValueFrom(this.profileService.send({ cmd: 'create-profile' }, profileData))
             return [user, profile]
         }
         catch (error) {
-            console.log(error);
+            return new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
 
     }
 
     async getUserByEmail(email: string) {
-        const user = await this.userRepository.findOne({ where: { email: email } });
-        return user;
+        return this.userRepository.findOne({ where: { email: email } });
+
     }
 
     private async getUserIdByEmail(email: string) {
@@ -63,14 +64,9 @@ export class UserService {
         return userId;
     }
 
-
-    private async validateUser(dto: LoginDto) {
-        const user = await this.getUserByEmail(dto.email);
-        const passwordEquals = await bcrypt.compare(dto.password, user.password);
-        if (user && passwordEquals) {
-            return user;
-        }
-        throw new UnauthorizedException({ message: 'Неправильный email или пароль' })
+    private async encryptPassword(password: string) {
+        const salt = await bcrypt.genSalt(10)
+        return bcrypt.hash(password, salt)
     }
 
 }

@@ -16,8 +16,7 @@ export class ProfileController {
 
     this.rmqService.acknowledgeMessage(context);
 
-    const profile = await this.profileService.createProfile(createProfileDto);
-    return profile;
+    return this.profileService.createProfile(createProfileDto);
   }
 
 }
