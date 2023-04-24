@@ -6,7 +6,7 @@ services:
     container_name: postgres_auth
     image: postgres
     env_file:
-      - .auth.env
+      - ./apps/auth/.auth.env
     ports:
       - '5434:5432'
     volumes:
@@ -16,7 +16,7 @@ services:
     container_name: postgres_profile
     image: postgres
     env_file:
-      - .profile.env
+      - ./apps/profile/.profile.env
     ports:
       - '5433:5432'
     volumes:

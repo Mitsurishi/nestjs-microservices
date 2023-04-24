@@ -21,10 +21,6 @@ export class User {
     @Column({ type: String })
     password: string;
 
-    // @Type(() => Number)
-    // @IsInt()
-    // profile_id: number;
-
     @OneToMany(() => UserRoles, (userRoles) => userRoles.user, { eager: true })
     userRoles: UserRoles[];
 

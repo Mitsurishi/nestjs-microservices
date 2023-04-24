@@ -15,6 +15,8 @@ export * from './dto/create-user.dto'
 export * from './dto/create-profile.dto'
 export * from './dto/update-user.dto'
 export * from './dto/update-profile.dto'
+export * from './dto/create-role.dto'
+export * from './dto/add-role.dto'
 
 
 //entities

@@ -19,4 +19,12 @@ export class ProfileController {
     return this.profileService.createProfile(createProfileDto);
   }
 
+  @MessagePattern({ cmd: 'get-profile-by-userId' })
+  async getProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
+
+    this.rmqService.acknowledgeMessage(context);
+
+    return this.profileService.getProfileByUserId(userId);
+  }
+
 }
