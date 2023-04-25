@@ -43,7 +43,7 @@ export class UserService {
         await firstValueFrom(this.profileService.send({ cmd: 'create-profile' }, profileData))
         const defaultRole = await this.roleService.getRoleByValue('User');
         await this.addRoleToUser({ value: defaultRole.value, userId: user.id })
-        return user
+        return this.userRepository.findOne({ where: { id: userId } })
 
     }
 

@@ -57,6 +57,14 @@ export class AuthController {
 
   }
 
+  @MessagePattern({ cmd: 'get-user-by-email' })
+  async getUserByEmail(@Ctx() context: RmqContext, @Payload() email: string) {
+
+    this.rmqService.acknowledgeMessage(context);
+    return this.userService.getUserByEmail(email);
+
+  }
+
   @MessagePattern({ cmd: 'get-user-by-id' })
   async getUserById(@Ctx() context: RmqContext, @Payload() userId: number) {
 

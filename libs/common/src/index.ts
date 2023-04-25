@@ -24,3 +24,11 @@ export * from './entities/profile.entity'
 export * from './entities/user.entity'
 export * from './entities/role.entity'
 export * from './entities/user-roles.entity'
+
+//guards
+export * from './guards/jwt-auth.guard'
+export * from './guards/roles.guard'
+
+//decorator
+export * from './guards/roles-auth.decorator'
+

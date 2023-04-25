@@ -17,7 +17,7 @@ export class AuthService {
 
     const { email, password, ...createProfileDto } = data;
     const user = await this.userService.createUser({ email, password }, createProfileDto);
-    return this.generateToken(user);
+    return this.generateToken(user)
 
   }
 
@@ -41,7 +41,8 @@ export class AuthService {
 
   private async generateToken(user: User) {
 
-    const payload = { email: user.email, id: user.id, userRoles: user.userRoles }
+    const userRoles = user?.userRoles?.map((element) => element.role.value) ?? []
+    const payload = { email: user.email, id: user.id, userRoles: userRoles }
     return {
       token: this.jwtService.sign(payload)
     }

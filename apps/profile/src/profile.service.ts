@@ -1,4 +1,4 @@
-import { CreateProfileDto, Profile, RegistrationDto } from '@app/common';
+import { CreateProfileDto, Profile, RegistrationDto, UpdateProfileDto } from '@app/common';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,6 +26,17 @@ export class ProfileService {
 
     const profile = await this.profileRepository.findOne({ where: { user_id: userId } });
     return profile;
+
+  }
+
+  async updateProfileByUserId(userId: number, updateProfileDto: UpdateProfileDto) {
+
+    const profile = await this.profileRepository.findOne({ where: { user_id: userId } })
+    return this.profileRepository.save({
+      name: updateProfileDto.name ?? profile.name,
+      surname: updateProfileDto.surname ?? profile.surname,
+      phone: updateProfileDto.phone ?? profile.phone
+    })
 
   }
 

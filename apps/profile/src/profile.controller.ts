@@ -1,4 +1,4 @@
-import { CreateProfileDto, RegistrationDto, RmqService } from '@app/common';
+import { CreateProfileDto, RegistrationDto, RmqService, UpdateProfileDto } from '@app/common';
 import { Controller, Get, Inject } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ProfileService } from './profile.service';
@@ -26,6 +26,14 @@ export class ProfileController {
 
     this.rmqService.acknowledgeMessage(context);
     return this.profileService.getProfileByUserId(userId);
+
+  }
+
+  @MessagePattern({ cmd: 'update-profile-by-userId' })
+  async updateProfileByUserId(@Ctx() context: RmqContext, @Payload() profileData: [number, UpdateProfileDto]) {
+
+    this.rmqService.acknowledgeMessage(context);
+    return this.profileService.updateProfileByUserId(profileData[0], profileData[1]);
 
   }
 

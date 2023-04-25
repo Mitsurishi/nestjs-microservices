@@ -6,10 +6,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
     @IsOptional()
     @IsEmail()
-    email: string;
+    readonly email: string;
 
     @IsOptional()
     @IsString()
-    password: string;
+    readonly password: string;
 
 }
