@@ -7,24 +7,34 @@ import { ProfileService } from './profile.service';
 export class ProfileController {
 
   constructor(
+
     private readonly profileService: ProfileService,
     private readonly rmqService: RmqService
+
   ) { }
 
   @MessagePattern({ cmd: 'create-profile' })
   async createProfile(@Ctx() context: RmqContext, @Payload() createProfileDto: CreateProfileDto) {
 
     this.rmqService.acknowledgeMessage(context);
-
     return this.profileService.createProfile(createProfileDto);
+
   }
 
   @MessagePattern({ cmd: 'get-profile-by-userId' })
   async getProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
 
     this.rmqService.acknowledgeMessage(context);
-
     return this.profileService.getProfileByUserId(userId);
+
+  }
+
+  @MessagePattern({ cmd: 'delete-profile-by-userId' })
+  async deleteProfileByUserId(@Ctx() context: RmqContext, @Payload() userId: number) {
+
+    this.rmqService.acknowledgeMessage(context);
+    return this.profileService.deleteProfileByUserId(userId);
+
   }
 
 }

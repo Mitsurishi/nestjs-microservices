@@ -9,10 +9,12 @@ import { UserService } from './services/user.service';
 export class AuthController {
 
   constructor(
+
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly roleService: RoleService,
     private readonly rmqService: RmqService,
+
   ) { }
 
   @MessagePattern({ cmd: 'registration' })
@@ -63,5 +65,12 @@ export class AuthController {
 
   }
 
+  @MessagePattern({ cmd: 'delete-user-by-id' })
+  async deleteUserById(@Ctx() context: RmqContext, @Payload() userId: number) {
+
+    this.rmqService.acknowledgeMessage(context);
+    return this.userService.deleteUserById(userId);
+
+  }
 
 }
