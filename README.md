@@ -11,6 +11,8 @@
 
 Training project consists of 2 microservices: auth - provides JWT authorisation, user CRUD operations and role model; profile - CRUD operations for user's profile
 
+Microservice architecture pattern used in this app is API gateway
+
 Messaging between microservices is done by RabbitMQ. Each microservice has its own database
 
 Application runs with docker. Each microservice and database runs inside its own container
