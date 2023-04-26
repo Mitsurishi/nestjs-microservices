@@ -1,9 +1,7 @@
 <h1 align="center">
 
 
-
-NestJs + RabbitMQ miscroservices project
-
+**NestJs + RabbitMQ miscroservices project**
 
 
 </h1>
