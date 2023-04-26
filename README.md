@@ -22,13 +22,13 @@ NestJs, TypeScript, RabbitMQm, TypeORM, PostgreSQL, Swagger
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Running the app
 
 ```bash
-$ docker-compose up --build
+docker-compose up --build
 ```
 
 ## Documentation
@@ -36,5 +36,5 @@ $ docker-compose up --build
 To see functionality of app you can start it and use link:
 
 ```bash
-$ http://localhost:3000/docs
+http://localhost:3000/docs
 ```
