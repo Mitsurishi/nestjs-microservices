@@ -9,7 +9,7 @@
 
 ## Description
 
-Training project consists of 2 microservices: auth - provides JWT authorisation, user CRUD operations and role model; profile - CRUD operations for user's profile
+An application consisting of two microservices: auth - provides JWT authorization, CRUD operations for users, and a role model (access to endpoints for certain roles); profile - CRUD operations for working with user profiles
 
 Microservice architecture pattern used in this app is API gateway
 
@@ -35,7 +35,7 @@ docker-compose up --build
 
 ## Documentation
 
-To see functionality of app you can start it and use link:
+To see functionality of app you can start it and use link below:
 
 ```bash
 http://localhost:3000/docs
