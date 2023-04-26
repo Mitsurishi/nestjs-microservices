@@ -17,7 +17,7 @@ Application runs with docker. Each microservice and database runs inside its own
 
 ## Stack
 
-NestJs, TypeScript, RabbitMQ, TypeORM, PostgreSQL, Swagger
+NestJs, TypeScript, RabbitMQ, PostgreSQL, TypeORM, Swagger
 
 ## Installation
 
