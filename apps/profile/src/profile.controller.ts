@@ -1,5 +1,5 @@
-import { CreateProfileDto, RegistrationDto, RmqService, UpdateProfileDto } from '@app/common';
-import { Controller, Get, Inject } from '@nestjs/common';
+import { CreateProfileDto, RmqService, UpdateProfileDto } from '@app/common';
+import { Controller } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ProfileService } from './profile.service';
 

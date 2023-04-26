@@ -32,16 +32,13 @@ export class RolesGuard implements CanActivate {
             } else {
                 return false
             }
-
         } catch (error) {
             throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN)
         }
-
     }
 
     isAccountOwner(req, user) {
         const userId = +req.params.userId
-        console.log(userId)
         if (userId === user.id) {
             return true
         }

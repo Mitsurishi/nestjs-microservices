@@ -1,10 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
-
 import { RmqService } from './rmq.service';
 
 @Module({
+
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
@@ -13,9 +13,13 @@ import { RmqService } from './rmq.service';
     ],
     providers: [RmqService],
     exports: [RmqService],
+
 })
+
 export class RmqModule {
+
     static registerRmq(service: string, queue: string): DynamicModule {
+
         const providers = [
             {
                 provide: service,
@@ -38,11 +42,11 @@ export class RmqModule {
                 inject: [ConfigService],
             },
         ];
-
         return {
             module: RmqModule,
             providers,
             exports: providers,
         };
     }
+
 }

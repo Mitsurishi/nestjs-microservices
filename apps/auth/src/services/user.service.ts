@@ -1,4 +1,4 @@
-import { AddRoleDto, CreateProfileDto, CreateUserDto, User, UserRoles, } from '@app/common';
+import { AddRoleDto, CreateProfileDto, CreateUserDto, UpdateUserDto, User, UserRoles, } from '@app/common';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -71,6 +71,35 @@ export class UserService {
 
         const users = await this.userRepository.find({ select: { id: true, email: true, userRoles: true } });
         return users;
+
+    }
+
+    async updateUserById(userId: number, updateUserDto: UpdateUserDto) {
+
+        if (updateUserDto.email) {
+            const candidate = await this.getUserByEmail(updateUserDto.email);
+            if (candidate) {
+                throw new HttpException('Пользователь с таким email уже существует', HttpStatus.BAD_REQUEST)
+            }
+
+        }
+        if (updateUserDto.password) {
+            const hashPassword = await this.encryptPassword(updateUserDto.password);
+            await this.userRepository.update({
+                id: userId
+            }, {
+                email: updateUserDto.email,
+                password: hashPassword
+            })
+            return this.userRepository.findOne({ where: { id: userId } })
+        }
+        await this.userRepository.update({
+            id: userId
+        }, {
+            email: updateUserDto.email,
+            password: updateUserDto.password
+        })
+        return this.userRepository.findOne({ where: { id: userId }, select: { id: true, email: true, password: false } })
 
     }
 

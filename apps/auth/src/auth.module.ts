@@ -10,6 +10,7 @@ import * as Joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
+
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -43,5 +44,7 @@ import { JwtModule } from '@nestjs/jwt';
     RoleService,
     RmqService,
   ],
+
 })
+
 export class AuthModule { }

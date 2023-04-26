@@ -38,6 +38,9 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
+    depends_on:
+      - postgres_auth
+      - postgres_profile
     volumes:
       - /var/lib/rabbitmq
     ports:

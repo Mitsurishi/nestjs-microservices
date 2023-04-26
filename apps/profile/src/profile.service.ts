@@ -31,12 +31,14 @@ export class ProfileService {
 
   async updateProfileByUserId(userId: number, updateProfileDto: UpdateProfileDto) {
 
-    const profile = await this.profileRepository.findOne({ where: { user_id: userId } })
-    return this.profileRepository.save({
-      name: updateProfileDto.name ?? profile.name,
-      surname: updateProfileDto.surname ?? profile.surname,
-      phone: updateProfileDto.phone ?? profile.phone
+    await this.profileRepository.update({
+      user_id: userId
+    }, {
+      name: updateProfileDto.name,
+      surname: updateProfileDto.surname,
+      phone: updateProfileDto.phone
     })
+    return this.profileRepository.findOne({ where: { user_id: userId } })
 
   }
 

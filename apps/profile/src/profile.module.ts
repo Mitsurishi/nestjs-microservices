@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 @Module({
+
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -28,5 +29,7 @@ import * as Joi from 'joi';
     ProfileService,
     RmqService,
   ],
+
 })
+
 export class ProfileModule { }

@@ -5,14 +5,14 @@ import { RmqServiceInterface } from './rmq.service.interface';
 
 @Injectable()
 export class RmqService implements RmqServiceInterface {
+
     constructor(private readonly configService: ConfigService) { }
 
-
     getRmqOptions(queue: string): RmqOptions {
+
         const USER = this.configService.get('RABBITMQ_USER');
         const PASSWORD = this.configService.get('RABBITMQ_PASS');
         const HOST = this.configService.get('RABBITMQ_HOST');
-
         return {
             transport: Transport.RMQ,
             options: {
@@ -24,11 +24,15 @@ export class RmqService implements RmqServiceInterface {
                 },
             },
         };
+
     }
 
     acknowledgeMessage(context: RmqContext) {
+
         const channel = context.getChannelRef();
         const message = context.getMessage();
         channel.ack(message);
+
     }
+
 }

@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({})
 export class DbModule {
+
     static forRoot(entities): DynamicModule {
+
         return {
             module: DbModule,
             imports: [
@@ -23,5 +25,7 @@ export class DbModule {
                 }),
             ],
         };
+
     }
+
 }

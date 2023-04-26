@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
+
     constructor(
 
         @InjectRepository(Role)

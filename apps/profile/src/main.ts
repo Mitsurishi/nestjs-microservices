@@ -4,6 +4,7 @@ import { RmqService } from '@app/common';
 import { ProfileModule } from './profile.module';
 
 async function bootstrap() {
+
   const app = await NestFactory.create(ProfileModule);
 
   const configService = app.get(ConfigService);
@@ -13,5 +14,7 @@ async function bootstrap() {
 
   app.connectMicroservice(rmqService.getRmqOptions(queue));
   app.startAllMicroservices();
+
 }
+
 bootstrap();
