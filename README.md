@@ -1,6 +1,6 @@
-<p align="center">
-#NestJs + RabbitMQ miscroservices project
-</p>
+<h1 align="center">
+NestJs + RabbitMQ miscroservices project
+</h1>
 
 
 ## Description
@@ -30,6 +30,7 @@ $ docker-compose up --build
 ## Documentation
 
 To see functionality of app you can start it and use link:
+
 ```bash
-$ (http://localhost:3000/docs)
+$ http://localhost:3000/docs
 ```
